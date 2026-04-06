@@ -8,7 +8,7 @@
 // ║  CONFIGURACIÓN — URL de tu Google Apps Script Web App   ║
 // ║  Reemplaza esta URL después de desplegar el script      ║
 // ╚══════════════════════════════════════════════════════════╝
-const SHEETS_URL = 'https://script.google.com/macros/s/REEMPLAZA_CON_TU_URL/exec';
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbylCpOURp9QGVZqzoRviwryGkjlqX9iBTbgTPqGTYwZsgT-i1gFj5Ixv4YZ3m0IhbttNw/exec';
 
 // ── Definición de proyectos ──────────────────────────────────
 const PROYECTOS = {
