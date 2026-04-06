@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ingeniería del Proyecto — Formulación y Evaluación</title>
+  <meta name="description" content="App educativa interactiva sobre Ingeniería del Proyecto: proceso productivo, distribución de planta, maquinaria y organigrama. Basada en Baca Urbina Cap. 3." />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     HEADER / NAV
+═══════════════════════════════════════════════════════════ -->
+<header class="app-header">
+  <div class="header-inner">
+
+    <div class="header-brand" style="cursor:pointer" onclick="showSeccion('home')">
+      <div class="header-logo">⚙️ Ingeniería del Proyecto</div>
+      <div class="header-subtitle">Formulación y Evaluación · UNIPAZ</div>
+    </div>
+
+    <nav class="app-nav">
+      <button class="nav-btn active" data-nav="home" id="nav-home">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Inicio</span>
+      </button>
+      <button class="nav-btn" data-nav="proceso" id="nav-proceso">
+        <span class="nav-icon">🔄</span>
+        <span class="nav-label">Proceso</span>
+      </button>
+      <button class="nav-btn" data-nav="layout" id="nav-layout">
+        <span class="nav-icon">🏭</span>
+        <span class="nav-label">Planta</span>
+      </button>
+      <button class="nav-btn" data-nav="maquinaria" id="nav-maquinaria">
+        <span class="nav-icon">🔧</span>
+        <span class="nav-label">Maquinaria</span>
+      </button>
+      <button class="nav-btn" data-nav="organigrama" id="nav-organigrama">
+        <span class="nav-icon">👥</span>
+        <span class="nav-label">Organigrama</span>
+      </button>
+      <button class="nav-btn" data-nav="ejercicio2" id="nav-ejercicio2">
+        <span class="nav-icon">📝</span>
+        <span class="nav-label">Ejercicio 2</span>
+      </button>
+    </nav>
+
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MAIN
+═══════════════════════════════════════════════════════════ -->
+<main class="app-main">
+
+  <!-- ───────────────────────────────────────
+       HOME
+  ─────────────────────────────────────── -->
+  <section id="section-home" class="section active">
+    <div class="home-hero">
+      <div class="home-hero-icon">⚙️</div>
+      <h1>Ingeniería del Proyecto</h1>
+      <p>Explora los 4 componentes clave del estudio técnico: proceso productivo,
+         distribución de planta, maquinaria y estructura organizacional.</p>
+
+      <div class="home-cards">
+
+        <div class="home-card" onclick="showSeccion('proceso')">
+          <div class="home-card-icon">🔄</div>
+          <h3>Proceso Productivo</h3>
+          <p>Diagrama de flujo interactivo con operaciones, decisiones, transportes y almacenamiento.</p>
+          <span class="home-card-badge chip purple">Clic para explorar →</span>
+        </div>
+
+        <div class="home-card" onclick="showSeccion('layout')">
+          <div class="home-card-icon">🏭</div>
+          <h3>Distribución de Planta</h3>
+          <p>Diseña visualmente la distribución de áreas en una cuadrícula 10×10. Método SLP.</p>
+          <span class="home-card-badge chip cyan">Diseñador de layout →</span>
+        </div>
+
+        <div class="home-card" onclick="showSeccion('maquinaria')">
+          <div class="home-card-icon">🔧</div>
+          <h3>Maquinaria y Equipo</h3>
+          <p>Tabla editable de equipos con costos, depreciación lineal e inversión total automática.</p>
+          <span class="home-card-badge chip green">Tabla interactiva →</span>
+        </div>
+
+        <div class="home-card" onclick="showSeccion('organigrama')">
+          <div class="home-card-icon">👥</div>
+          <h3>Estructura Organizacional</h3>
+          <p>Organigrama visual. Clic en cada cargo para ver funciones y perfil requerido.</p>
+          <span class="home-card-badge chip purple">Ver organigrama →</span>
+        </div>
+
+        <div class="home-card" onclick="showSeccion('ejercicio2')"
+             style="background:linear-gradient(135deg,rgba(124,58,237,.12),rgba(0,212,255,.08));border-color:rgba(124,58,237,.25)">
+          <div class="home-card-icon">📝</div>
+          <h3>Ejercicio 2</h3>
+          <p>Diseña el proceso y la planta de tu proyecto. Envío automático a Google Sheets.</p>
+          <span class="home-card-badge chip purple">¡Hazlo tú! →</span>
+        </div>
+
+      </div><!-- /home-cards -->
+
+      <div class="baca-ref" style="margin-top:40px">
+        <div class="baca-ref-icon">📘</div>
+        <div>
+          <h4>Referencia bibliográfica</h4>
+          <p>Baca Urbina, G. — <em>Evaluación de Proyectos</em>, 8.ª ed. Capítulo 3: Estudio Técnico.
+             McGraw-Hill, 2016.</p>
+        </div>
+      </div>
+
+    </div>
+  </section><!-- /section-home -->
+
+
+  <!-- ───────────────────────────────────────
+       PROCESO PRODUCTIVO
+  ─────────────────────────────────────── -->
+  <section id="section-proceso" class="section">
+
+    <div class="section-header">
+      <div class="section-badge">Módulo 1</div>
+      <h2 class="section-title">🔄 Proceso Productivo</h2>
+      <p class="section-desc">
+        Explora paso a paso el flujo del proceso de cada proyecto.
+        Haz <strong>clic en cualquier bloque</strong> para ver la descripción detallada.
+      </p>
+    </div>
+
+    <!-- Selector de proyecto -->
+    <div class="proj-selector">
+      <button class="proj-btn proc-proj-btn active" data-proj="suplementos">
+        💊 Tienda de Suplementos
+      </button>
+      <button class="proj-btn proc-proj-btn" data-proj="logistica">
+        📦 Empresa Logística
+      </button>
+    </div>
+
+    <!-- Leyenda -->
+    <div class="glass-card" style="margin-bottom:20px;padding:16px 20px">
+      <div class="glass-card-title">Simbología del diagrama</div>
+      <div class="proc-leyenda" id="proc-leyenda"></div>
+    </div>
+
+    <!-- Layout flujo + detalle -->
+    <div class="proc-layout">
+
+      <!-- Diagrama -->
+      <div class="glass-card" style="padding:16px">
+        <div id="proc-flow-container" class="proc-flow-container"></div>
+      </div>
+
+      <!-- Panel de detalle -->
+      <div>
+        <div id="proc-detalle"></div>
+        <div class="proc-hint" id="proc-hint">
+          ← Selecciona un paso del diagrama para ver su descripción
+        </div>
+      </div>
+
+    </div><!-- /proc-layout -->
+
+  </section><!-- /section-proceso -->
+
+
+  <!-- ───────────────────────────────────────
+       DISTRIBUCIÓN DE PLANTA
+  ─────────────────────────────────────── -->
+  <section id="section-layout" class="section">
+
+    <div class="section-header">
+      <div class="section-badge">Módulo 2</div>
+      <h2 class="section-title">🏭 Distribución de Planta</h2>
+      <p class="section-desc">
+        Diseña la distribución de áreas de la planta.
+        <strong>Selecciona un área</strong> de la paleta y pinta las celdas de la cuadrícula.
+        Usa <em>Auto-completar</em> para ver una distribución proporcional de referencia.
+      </p>
+    </div>
+
+    <!-- Selector -->
+    <div class="proj-selector">
+      <button class="proj-btn layout-proj-btn active" data-proj="suplementos">
+        💊 Tienda de Suplementos
+      </button>
+      <button class="proj-btn layout-proj-btn" data-proj="logistica">
+        📦 Empresa Logística
+      </button>
+    </div>
+
+    <!-- Grid + paleta -->
+    <div class="layout-grid-container">
+
+      <!-- Cuadrícula -->
+      <div class="glass-card" style="padding:16px">
+        <div class="glass-card-title">Planta (cuadrícula 10×10)</div>
+        <div id="layout-visual" class="layout-visual"></div>
+
+        <div class="layout-controls">
+          <button class="layout-btn primary" id="layout-btn-auto">
+            ✨ Auto-completar
+          </button>
+          <button class="layout-btn" id="layout-btn-reset">
+            🗑️ Limpiar
+          </button>
+        </div>
+      </div>
+
+      <!-- Paleta + stats -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <div class="glass-card" style="padding:16px">
+          <div class="glass-card-title">Selecciona un área</div>
+          <div id="layout-palette" class="layout-palette"></div>
+        </div>
+
+        <div class="glass-card" style="padding:16px">
+          <div class="glass-card-title">📊 Estadísticas</div>
+          <div id="layout-stats" class="layout-stats"></div>
+        </div>
+
+      </div>
+
+    </div><!-- /layout-grid-container -->
+
+    <!-- Nota SLP -->
+    <div class="glass-card" style="margin-top:20px;padding:16px 20px;
+         background:linear-gradient(135deg,rgba(0,212,255,.06),rgba(124,58,237,.06));
+         border-color:rgba(0,212,255,.2)">
+      <strong style="color:var(--accent2)">📐 Método SLP (Systematic Layout Planning)</strong>
+      <p style="margin-top:6px;font-size:13px;color:var(--text-muted)">
+        El método SLP de Muther clasifica las relaciones entre áreas con valores de cercanía
+        (A = absolutamente necesaria, E = especialmente importante, I = importante, O = ordinaria,
+        U = no necesaria, X = indeseable). Esta cuadrícula es una representación simplificada;
+        el diseño real considera flujos de materiales, seguridad y normativa vigente.
+      </p>
+    </div>
+
+  </section><!-- /section-layout -->
+
+
+  <!-- ───────────────────────────────────────
+       MAQUINARIA Y EQUIPO
+  ─────────────────────────────────────── -->
+  <section id="section-maquinaria" class="section">
+
+    <div class="section-header">
+      <div class="section-badge">Módulo 3</div>
+      <h2 class="section-title">🔧 Maquinaria y Equipo</h2>
+      <p class="section-desc">
+        Tabla detallada de los requerimientos de equipos.
+        Puedes <strong>editar cantidades y costos</strong>; los totales se calculan automáticamente.
+      </p>
+    </div>
+
+    <!-- Selector -->
+    <div class="proj-selector">
+      <button class="proj-btn maq-proj-btn active" data-proj="suplementos">
+        💊 Tienda de Suplementos
+      </button>
+      <button class="proj-btn maq-proj-btn" data-proj="logistica">
+        📦 Empresa Logística
+      </button>
+    </div>
+
+    <!-- Tabla -->
+    <div class="glass-card" style="padding:0;overflow:hidden">
+      <div id="maq-table-wrap" class="maq-table-wrap"></div>
+    </div>
+
+    <!-- Resumen -->
+    <div id="maq-summary" class="maq-summary"></div>
+
+    <!-- Nota depreciación -->
+    <div class="glass-card" style="margin-top:8px;padding:14px 20px;
+         background:rgba(245,158,11,.06);border-color:rgba(245,158,11,.2)">
+      <strong style="color:var(--gold)">📉 Depreciación Línea Recta</strong>
+      <p style="margin-top:4px;font-size:13px;color:var(--text-muted)">
+        Fórmula: Dep. anual = (Costo – Valor de rescate) / Vida útil.
+        Aquí se asume <em>valor de rescate = 0</em> para simplificar el cálculo.
+        En el estudio financiero real se incorpora como gasto no desembolsable.
+      </p>
+    </div>
+
+  </section><!-- /section-maquinaria -->
+
+
+  <!-- ───────────────────────────────────────
+       ORGANIGRAMA
+  ─────────────────────────────────────── -->
+  <section id="section-organigrama" class="section">
+
+    <div class="section-header">
+      <div class="section-badge">Módulo 4</div>
+      <h2 class="section-title">👥 Estructura Organizacional</h2>
+      <p class="section-desc">
+        Organigrama del proyecto. <strong>Haz clic en cualquier cargo</strong>
+        para ver sus funciones y el perfil requerido.
+      </p>
+    </div>
+
+    <!-- Selector -->
+    <div class="proj-selector">
+      <button class="proj-btn org-proj-btn active" data-proj="suplementos">
+        💊 Tienda de Suplementos
+      </button>
+      <button class="proj-btn org-proj-btn" data-proj="logistica">
+        📦 Empresa Logística
+      </button>
+    </div>
+
+    <!-- Árbol -->
+    <div class="glass-card" style="overflow-x:auto">
+      <div id="org-tree-container" class="org-tree" style="min-width:400px"></div>
+    </div>
+
+    <!-- Detalle -->
+    <div id="org-detail" class="org-detail"></div>
+
+    <!-- Nota -->
+    <div class="glass-card" style="margin-top:20px;padding:14px 20px;
+         background:rgba(16,185,129,.05);border-color:rgba(16,185,129,.2)">
+      <strong style="color:var(--accent3)">📋 Marco legal laboral</strong>
+      <p style="margin-top:4px;font-size:13px;color:var(--text-muted)">
+        En Colombia, los contratos de trabajo se rigen por el Código Sustantivo del Trabajo (CST).
+        Los cargos pueden vincularse mediante contrato a término fijo, indefinido, obra o labor,
+        o prestación de servicios. El tipo de vinculación afecta la estructura de costos laborales
+        (prestaciones sociales, aportes parafiscales, seguridad social).
+      </p>
+    </div>
+
+  </section><!-- /section-organigrama -->
+
+
+  <!-- ───────────────────────────────────────
+       EJERCICIO 2
+  ─────────────────────────────────────── -->
+  <section id="section-ejercicio2" class="section">
+
+    <div class="section-header">
+      <div class="section-badge">Actividad Evaluativa</div>
+      <h2 class="section-title">📝 Ejercicio 2 — Diseña tu proceso y planta</h2>
+      <p class="section-desc">
+        Aplica los conceptos de ingeniería del proyecto a tu caso de estudio.
+        Completa las tres partes y haz clic en <strong>Enviar</strong> para registrar tu respuesta.
+      </p>
+    </div>
+
+    <!-- Selector -->
+    <div class="proj-selector" style="margin-bottom:24px">
+      <button class="proj-btn ej2-proj-btn active" data-proj="suplementos">
+        💊 Tienda de Suplementos
+      </button>
+      <button class="proj-btn ej2-proj-btn" data-proj="logistica">
+        📦 Empresa Logística
+      </button>
+    </div>
+
+    <!-- Grid de tarjetas -->
+    <div class="ej2-layout">
+
+      <!-- Parte A: Descripción del proceso -->
+      <div class="ej2-card">
+        <div class="ej2-card-title">
+          <span>🔄</span> Parte A — Describe el Proceso Productivo
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="ej2-descripcion">
+            ¿Cómo es el proceso de tu proyecto? Describe las etapas principales (mínimo 4 pasos).
+          </label>
+          <textarea class="form-control" id="ej2-descripcion" rows="6"
+            placeholder="Ej: 1. Recepción de inventario → 2. Clasificación → 3. Almacenamiento → 4. Venta y facturación → 5. Despacho al cliente..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="ej2-tipo-proceso">
+            Tipo de proceso productivo predominante
+          </label>
+          <select class="form-control" id="ej2-tipo-proceso">
+            <option value="">— Selecciona —</option>
+            <option value="continuo">Continuo (producción ininterrumpida)</option>
+            <option value="intermitente">Intermitente (por lotes o pedidos)</option>
+            <option value="proyecto">Por proyecto (único e irrepetible)</option>
+            <option value="servicio">Servicio (intangible, cliente presente)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">¿Qué tipo de cuello de botella anticipas?</label>
+          <textarea class="form-control" id="ej2-cuello" rows="3"
+            placeholder="Ej: En temporada alta, la atención al cliente puede saturar si solo hay un asesor..."></textarea>
+        </div>
+      </div><!-- /Parte A -->
+
+      <!-- Parte B: Layout -->
+      <div class="ej2-card">
+        <div class="ej2-card-title">
+          <span>🏭</span> Parte B — Distribución de Planta
+        </div>
+
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px">
+          Selecciona las áreas que tendrá tu proyecto e indica el área aproximada en m² de cada una.
+        </p>
+
+        <div class="ej2-areas-check" id="ej2-areas"></div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;
+                    padding:10px 14px;background:rgba(255,255,255,.04);border-radius:8px;border:1px solid var(--border)">
+          <span style="font-size:13px;color:var(--text-muted)">Área total del proyecto</span>
+          <strong id="ej2-total-m2" style="font-family:monospace;color:var(--accent3)">0.0 m²</strong>
+        </div>
+
+        <div class="form-group" style="margin-top:14px">
+          <label class="form-label" for="ej2-layout-justif">
+            Justifica brevemente la distribución elegida
+          </label>
+          <textarea class="form-control" id="ej2-layout-justif" rows="3"
+            placeholder="Ej: El salón de ventas es la zona más grande porque es el área de contacto directo con el cliente..."></textarea>
+        </div>
+      </div><!-- /Parte B -->
+
+      <!-- Parte C: Equipos -->
+      <div class="ej2-card">
+        <div class="ej2-card-title">
+          <span>🔧</span> Parte C — Requerimientos de Maquinaria y Equipo
+        </div>
+
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px">
+          Lista los equipos necesarios para tu proyecto, la cantidad requerida y el costo estimado.
+        </p>
+
+        <div id="ej2-equipos"></div>
+      </div><!-- /Parte C -->
+
+      <!-- Información del estudiante + envío -->
+      <div class="ej2-card ej2-submit-area" style="grid-column:1/-1">
+        <div class="ej2-card-title">
+          <span>👤</span> Datos del Estudiante
+        </div>
+
+        <div class="ej2-student-info">
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label" for="ej2-nombre">Nombre completo</label>
+            <input class="form-control" type="text" id="ej2-nombre"
+              placeholder="Tu nombre completo" />
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label" for="ej2-grupo">Grupo / Semestre</label>
+            <input class="form-control" type="text" id="ej2-grupo"
+              placeholder="Ej: Grupo A, 6.° semestre" />
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top:14px">
+          <label class="form-label" for="ej2-observaciones">
+            Observaciones o reflexión final (opcional)
+          </label>
+          <textarea class="form-control" id="ej2-observaciones" rows="2"
+            placeholder="¿Qué fue lo más complejo de diseñar el proceso y la planta de tu proyecto?"></textarea>
+        </div>
+
+        <div style="margin-top:16px">
+          <button class="btn-submit" id="ej2-submit-btn" onclick="submitEjercicio2()">
+            📤 Enviar Ejercicio 2
+          </button>
+        </div>
+
+        <div id="ej2-msg" class="submit-msg"></div>
+
+      </div><!-- /submit area -->
+
+    </div><!-- /ej2-layout -->
+
+  </section><!-- /section-ejercicio2 -->
+
+</main><!-- /app-main -->
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCRIPTS (orden importante: data → módulos → app)
+═══════════════════════════════════════════════════════════ -->
+<script src="js/data.js"></script>
+<script src="js/proceso.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/maquinaria.js"></script>
+<script src="js/organigrama.js"></script>
+<script src="js/ejercicio2.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
