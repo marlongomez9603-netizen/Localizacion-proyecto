@@ -180,7 +180,15 @@ function renderEjPPTable(proj) {
 
 function renderEjBGCriticalTable(proj) {
   const cities = proj.ciudades;
+  const thead = document.getElementById('ej-bg-critical-thead');
   const tbody = document.getElementById('ej-bg-critical-tbody');
+
+  // Encabezado con nombres de ciudades
+  if (thead) thead.innerHTML = `<tr>
+    <th>Factor Crítico</th>
+    ${cities.map(c => `<th>${c.icon} ${c.shortName}</th>`).join('')}
+  </tr>`;
+
   tbody.innerHTML = `
     <tr><td>Existe infraestructura básica (agua, luz)</td>${cities.map((_,ci)=>`<td class="checkbox-cell"><label class="toggle-switch"><input type="checkbox" class="ej-critical-check" data-city="${ci}" checked/><span class="toggle-slider"></span></label></td>`).join('')}</tr>
     <tr><td>Acceso vial al lugar</td>${cities.map((_,ci)=>`<td class="checkbox-cell"><label class="toggle-switch"><input type="checkbox" class="ej-critical-check" data-city="${ci}" checked/><span class="toggle-slider"></span></label></td>`).join('')}</tr>
@@ -195,8 +203,16 @@ function renderEjBGCriticalTable(proj) {
 
 function renderEjBGFOTable(proj) {
   const cities = proj.ciudades;
+  const thead = document.getElementById('ej-bg-fo-thead');
   const tbody = document.getElementById('ej-bg-fo-tbody');
   const {rows, vals} = proj.costosBG;
+
+  // Encabezado con nombres de ciudades
+  if (thead) thead.innerHTML = `<tr>
+    <th>Concepto (M$)</th>
+    ${cities.map(c => `<th>${c.icon} ${c.shortName}</th>`).join('')}
+  </tr>`;
+
   tbody.innerHTML = rows.map((rowName, ri) => `
     <tr>
       <td>${rowName}</td>
@@ -208,7 +224,15 @@ function renderEjBGFOTable(proj) {
 
 function renderEjBGFSTable(proj) {
   const cities = proj.ciudades;
+  const thead = document.getElementById('ej-bg-fs-thead');
   const tbody = document.getElementById('ej-bg-fs-tbody');
+
+  // Encabezado con nombres de ciudades
+  if (thead) thead.innerHTML = `<tr>
+    <th>Factor Subjetivo</th>
+    <th>Peso (W)<br><small>suma=1.0</small></th>
+    ${cities.map(c => `<th>${c.icon} ${c.shortName}</th>`).join('')}
+  </tr>`;
   tbody.innerHTML = proj.factoresFS.map((f, fi) => `
     <tr>
       <td>${f.nombre}</td>
