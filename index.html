@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Localización de Proyectos | UNIPAZ — Formulación y Evaluación</title>
+  <meta name="description" content="Aprende los métodos de Puntos Ponderados y Brown & Gibson para localización de proyectos, con mapas interactivos y ejercicios prácticos. Basado en Baca Urbina."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+
+<!-- ══ HEADER ════════════════════════════════════════════════ -->
+<header class="header" id="header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-icon">📍</span>
+      <div>
+        <span class="logo-title">Localización de Proyectos</span>
+        <span class="logo-sub">UNIPAZ · Formulación y Evaluación</span>
+      </div>
+    </div>
+    <nav class="nav" id="main-nav">
+      <a class="nav-link" data-section="hero" href="#">Inicio</a>
+      <a class="nav-link" data-section="puntos" href="#">Puntos Ponderados</a>
+      <a class="nav-link" data-section="browngibson" href="#">Brown &amp; Gibson</a>
+    </nav>
+    <button class="hamburger" id="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ══ HERO ══════════════════════════════════════════════════ -->
+<section id="hero" class="hero-section">
+  <div class="hero-bg-map" id="hero-map"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-badge">📚 Baca Urbina • Evaluación de Proyectos</div>
+    <h1 class="hero-title">
+      Métodos de<br/>
+      <span class="gradient-text">Localización de Proyectos</span>
+    </h1>
+    <p class="hero-desc">Aprende dos métodos cuantitativos para tomar decisiones de localización. Interactúa con el mapa, ajusta parámetros y descubre qué ciudad es la mejor opción.</p>
+    <div class="hero-cards">
+      <div class="method-card animate-fade-up" onclick="scrollToSection('puntos')">
+        <div class="method-card-icon">⚖️</div>
+        <h3>Puntos Ponderados</h3>
+        <p>Califica factores con pesos relativos (W) y compara alternativas según su puntaje total.</p>
+        <span class="method-card-cta">Explorar método →</span>
+      </div>
+      <div class="method-card animate-fade-up" onclick="scrollToSection('browngibson')" style="animation-delay:.15s">
+        <div class="method-card-icon">🔬</div>
+        <h3>Brown &amp; Gibson</h3>
+        <p>Combina factores críticos, objetivos (FO) y subjetivos (FS) mediante el índice MPL.</p>
+        <span class="method-card-cta">Explorar método →</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PUNTOS PONDERADOS ══════════════════════════════════════ -->
+<section id="puntos" class="method-section">
+  <div class="section">
+    <div class="section-header animate-fade-up">
+      <div class="section-badge">Método 1</div>
+      <h2 class="section-title">⚖️ Puntos Ponderados</h2>
+      <p class="section-desc">Cada factor recibe un peso (W) de importancia y cada alternativa una calificación (C). La sumatoria ponderada determina la mejor localización.</p>
+    </div>
+    <!-- Fórmula -->
+    <div class="formula-block animate-fade-up">
+      <span class="formula-label">Fórmula</span>
+      <span class="formula-content">PP<sub>i</sub> = Σ (W<sub>j</sub> × C<sub>ij</sub>)</span>
+      <div class="formula-legend">
+        <span><strong>W<sub>j</sub></strong> = Peso del factor j (Σ=1.0)</span>
+        <span><strong>C<sub>ij</sub></strong> = Calificación de la alternativa i en el factor j (1–10)</span>
+        <span><strong>PP<sub>i</sub></strong> = Puntaje total de la alternativa i</span>
+      </div>
+    </div>
+    <!-- Pasos -->
+    <div class="theory-grid animate-fade-up">
+      <div class="step-card"><div class="step-number">1</div><div class="step-content"><h4>Identificar factores</h4><p>Lista los factores relevantes: costos, mercado, infraestructura, etc.</p></div></div>
+      <div class="step-card"><div class="step-number">2</div><div class="step-content"><h4>Asignar pesos (W)</h4><p>Pondera cada factor en una escala de 0 a 1. La suma de todos los W debe ser 1.0.</p></div></div>
+      <div class="step-card"><div class="step-number">3</div><div class="step-content"><h4>Calificar alternativas</h4><p>Para cada factor, asigna una calificación de 1 a 10 a cada ciudad candidata.</p></div></div>
+      <div class="step-card"><div class="step-number">4</div><div class="step-content"><h4>Calcular y comparar</h4><p>Multiplica W × C por cada factor y suma. La mayor sumatoria gana.</p></div></div>
+    </div>
+    <!-- Layout: tabla + mapa -->
+    <div class="two-col-layout animate-fade-up">
+      <div class="col-content">
+        <div class="tab-bar">
+          <button class="tab-btn active" id="pp-tab-ejemplo" onclick="ppSwitchTab('ejemplo')">📋 Ejemplo del Libro</button>
+          <button class="tab-btn" id="pp-tab-calc" onclick="ppSwitchTab('calc')">🧮 Mi Propia Tabla</button>
+        </div>
+        <!-- Panel ejemplo -->
+        <div class="tab-panel active" id="pp-panel-ejemplo">
+          <p class="panel-intro">Ejemplo adaptado de <em>Baca Urbina (2013)</em>, Cap. 4. Tres ciudades colombianas se comparan según cinco factores clave para una nueva planta industrial.</p>
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Factor</th><th class="weight-cell">W</th>
+                  <th>🏭 Barranc.</th><th>🏙️ Bucaram.</th><th>🏛️ Bogotá</th>
+                  <th>W×C<sub>Barr.</sub></th><th>W×C<sub>Buc.</sub></th><th>W×C<sub>Bog.</sub></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Cercanía a proveedores</td><td class="weight-cell">0.30</td><td>9</td><td>7</td><td>6</td><td>2.700</td><td>2.100</td><td>1.800</td></tr>
+                <tr><td>Costo mano de obra</td><td class="weight-cell">0.25</td><td>8</td><td>7</td><td>5</td><td>2.000</td><td>1.750</td><td>1.250</td></tr>
+                <tr><td>Acceso a mercados</td><td class="weight-cell">0.20</td><td>5</td><td>7</td><td>9</td><td>1.000</td><td>1.400</td><td>1.800</td></tr>
+                <tr><td>Infraestructura</td><td class="weight-cell">0.15</td><td>6</td><td>8</td><td>9</td><td>0.900</td><td>1.200</td><td>1.350</td></tr>
+                <tr><td>Clima laboral</td><td class="weight-cell">0.10</td><td>8</td><td>7</td><td>6</td><td>0.800</td><td>0.700</td><td>0.600</td></tr>
+              </tbody>
+              <tfoot>
+                <tr class="result-row" id="pp-result-row" style="display:none">
+                  <td colspan="2"><strong>🏆 Puntaje Total (PP<sub>i</sub>)</strong></td>
+                  <td id="pp-res-bar" class="result-cell"></td>
+                  <td id="pp-res-buc" class="result-cell"></td>
+                  <td id="pp-res-bog" class="result-cell"></td>
+                  <td colspan="3"></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <div class="btn-row">
+            <button class="btn-primary" onclick="calcularPuntos()">⚡ Calcular Paso a Paso</button>
+            <button class="btn-ghost" onclick="resetPuntos()">↺ Reiniciar</button>
+          </div>
+          <pre class="steps-log" id="pp-steps-log"></pre>
+          <div class="winner-banner" id="pp-winner-banner" style="display:none"></div>
+        </div>
+        <!-- Panel calculadora propia -->
+        <div class="tab-panel" id="pp-panel-calc">
+          <p class="panel-intro">Ingresa tus propios factores, pesos y calificaciones. Verifica que la suma de pesos sea exactamente 1.0.</p>
+          <div class="weight-progress-bar">
+            <div class="weight-progress-label">Suma de pesos: <strong id="pp-custom-sum">1.00</strong></div>
+            <div class="weight-bar-track"><div class="weight-bar-fill" id="pp-custom-bar" style="width:100%"></div></div>
+          </div>
+          <div id="pp-weight-warning" class="weight-alert" style="display:none">⚠️ Los pesos suman <strong id="pp-weight-sum"></strong> — debe ser 1.0</div>
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead><tr><th>Factor</th><th class="weight-cell">Peso (W)</th><th>🏭 Barranc.</th><th>🏙️ Bucaram.</th><th>🏛️ Bogotá</th></tr></thead>
+              <tbody id="pp-custom-tbody">
+                <tr><td><input class="cell-input factor-input" value="Factor A"/></td><td><input class="cell-input weight-input" type="number" step="0.05" min="0" max="1" value="0.40" onchange="validatePPWeights()"/></td><td><input class="cell-input score-input" type="number" min="1" max="10" value="8"/></td><td><input class="cell-input score-input" type="number" min="1" max="10" value="7"/></td><td><input class="cell-input score-input" type="number" min="1" max="10" value="9"/></td></tr>
+                <tr><td><input class="cell-input factor-input" value="Factor B"/></td><td><input class="cell-input weight-input" type="number" step="0.05" min="0" max="1" value="0.35" onchange="validatePPWeights()"/></td><td><input class="cell-input score-input" type="number" min="1" max="10" value="7"/></td><td><input class="cell-input score-input" type="number" min="1" max="10" value="8"/></td><td><input class="cell-input score-input" type="number" min="1" max="10" value="6"/></td></tr>
+                <tr><td><input class="cell-input factor-input" value="Factor C"/></td><td><input class="cell-input weight-input" type="number" step="0.05" min="0" max="1" value="0.25" onchange="validatePPWeights()"/></td><td><input class="cell-input score-input" type="number" min="1" max="10" value="6"/></td><td><input class="cell-input score-input" type="number" min="1" max="10" value="7"/></td><td><input class="cell-input score-input" type="number" min="1" max="10" value="8"/></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="btn-row">
+            <button class="btn-primary" onclick="calcularPuntosCustom()">⚡ Calcular</button>
+            <button class="btn-secondary" onclick="addPPRow()">＋ Agregar Factor</button>
+          </div>
+          <div class="result-panel" id="pp-custom-result" style="display:none"></div>
+        </div>
+      </div>
+      <!-- Mapa PP -->
+      <div class="col-map animate-fade-up" style="animation-delay:.1s">
+        <div class="map-card">
+          <div class="map-card-header"><span>🗺️ Mapa Interactivo</span><span class="map-hint">Los marcadores reaccionan a tus datos</span></div>
+          <div id="pp-map" class="map-container"></div>
+          <div class="map-overlay">
+            <div class="overlay-title" id="pp-overlay-title">Resultados en tiempo real</div>
+            <div class="overlay-items" id="pp-overlay-items">
+              <div class="overlay-item neutral"><span class="rank-dot" style="background:#00d4ff"></span>🏭 Barrancabermeja</div>
+              <div class="overlay-item neutral"><span class="rank-dot" style="background:#00d4ff"></span>🏙️ Bucaramanga</div>
+              <div class="overlay-item neutral"><span class="rank-dot" style="background:#00d4ff"></span>🏛️ Bogotá</div>
+            </div>
+          </div>
+        </div>
+        <div class="reference-note">📖 <em>Baca Urbina, G. (2013). Evaluación de Proyectos (7ª ed.). McGraw-Hill. Cap. 4 — Estudio Técnico.</em></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ BROWN & GIBSON ═════════════════════════════════════════ -->
+<section id="browngibson" class="method-section" style="background:rgba(255,255,255,.015);border-top:1px solid var(--border)">
+  <div class="section">
+    <div class="section-header animate-fade-up">
+      <div class="section-badge" style="background:linear-gradient(135deg,#7c3aed,#4f46e5)">Método 2</div>
+      <h2 class="section-title">🔬 Método Brown &amp; Gibson</h2>
+      <p class="section-desc">Integra factores cuantitativos y cualitativos. Primero elimina con factores críticos, luego calcula FO (objetivo) y FS (subjetivo), y combina en el índice MPL.</p>
+    </div>
+    <div class="formula-block animate-fade-up" style="background:linear-gradient(135deg,rgba(124,58,237,.08),rgba(79,70,229,.06));border-color:rgba(124,58,237,.3)">
+      <span class="formula-label" style="background:rgba(124,58,237,.15);color:#a78bfa">Fórmula MPL</span>
+      <div>
+        <div class="formula-inline">MPL<sub>i</sub> = K · FO<sub>i</sub> + (1-K) · FS<sub>i</sub></div>
+        <div class="formula-legend">
+          <span><strong>FO<sub>i</sub></strong> = Factor Objetivo (costo relativo)</span>
+          <span><strong>FS<sub>i</sub></strong> = Factor Subjetivo (calificación cualitativa)</span>
+          <span><strong>K</strong> = Ponderación entre objetivo y subjetivo (0–1)</span>
+        </div>
+      </div>
+    </div>
+    <!-- Stepper -->
+    <div class="stage-stepper animate-fade-up">
+      <div class="stage-step active" id="bg-stage-indicator-1" onclick="bgGoToStage(1)">
+        <div class="stage-dot">1</div>Factores Críticos
+      </div>
+      <div class="stage-connector"></div>
+      <div class="stage-step" id="bg-stage-indicator-2" onclick="bgGoToStage(2)">
+        <div class="stage-dot">2</div>FO Objetivo
+      </div>
+      <div class="stage-connector"></div>
+      <div class="stage-step" id="bg-stage-indicator-3" onclick="bgGoToStage(3)">
+        <div class="stage-dot">3</div>FS Subjetivo
+      </div>
+      <div class="stage-connector"></div>
+      <div class="stage-step" id="bg-stage-indicator-4" onclick="bgGoToStage(4)">
+        <div class="stage-dot">4</div>MPL Final
+      </div>
+    </div>
+
+    <div class="two-col-layout animate-fade-up">
+      <div class="col-content">
+
+        <!-- Etapa 1 -->
+        <div class="bg-stage active" id="bg-stage-1">
+          <div class="stage-header">
+            <h3><span class="stage-tag eliminating">ELIMINATORIO</span>Etapa 1: Factores Críticos</h3>
+            <p>Si una ciudad NO cumple un factor crítico (requisito mínimo obligatorio), queda automáticamente <strong>eliminada</strong> del análisis.</p>
+          </div>
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead><tr><th style="text-align:left">Factor Crítico</th><th>🏭 Barranc.</th><th>🏙️ Bucaram.</th><th>🏛️ Bogotá</th></tr></thead>
+              <tbody>
+                <tr><td>Suministro de agua suficiente</td><td class="checkbox-cell"><label class="toggle-switch"><input type="checkbox" class="critical-check" data-city="0" checked/><span class="toggle-slider"></span></label></td><td class="checkbox-cell"><label class="toggle-switch"><input type="checkbox" class="critical-check" data-city="1" checked/><span class="toggle-slider"></span></label></td><td class="checkbox-cell"><label class="toggle-switch"><input type="checkbox" class="critical-check" data-city="2" checked/><span class="toggle-slider"></span></label></td></tr>
+                <tr><td>Energía eléctrica disponible</td><td class="checkbox-cell"><label class="toggle-switch"><input type="checkbox" class="critical-check" data-city="0" checked/><span class="toggle-slider"></span></label></td><td class="checkbox-cell"><label class="toggle-switch"><input type="checkbox" class="critical-check" data-city="1" checked/><span class="toggle-slider"></span></label></td><td class="checkbox-cell"><label class="toggle-switch"><input type="checkbox" class="critical-check" data-city="2" checked/><span class="toggle-slider"></span></label></td></tr>
+                <tr><td>Normativa municipal compatible</td><td class="checkbox-cell"><label class="toggle-switch"><input type="checkbox" class="critical-check" data-city="0" checked/><span class="toggle-slider"></span></label></td><td class="checkbox-cell"><label class="toggle-switch"><input type="checkbox" class="critical-check" data-city="1" checked/><span class="toggle-slider"></span></label></td><td class="checkbox-cell"><label class="toggle-switch"><input type="checkbox" class="critical-check" data-city="2" checked/><span class="toggle-slider"></span></label></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="btn-row"><button class="btn-primary" onclick="evalCritical()">Evaluar Factores Críticos →</button></div>
+          <div class="stage-result" id="bg-critical-result"></div>
+          <div class="btn-row" style="margin-top:12px"><button class="btn-secondary" onclick="bgGoToStage(2)">Siguiente: FO →</button></div>
+        </div>
+
+        <!-- Etapa 2 -->
+        <div class="bg-stage" id="bg-stage-2">
+          <div class="stage-header">
+            <h3><span class="stage-tag objective">OBJETIVO</span>Etapa 2: Factor Objetivo (FO)</h3>
+            <p>Ingresa los costos cuantificables para cada ciudad. El FO se calcula como el inverso proporcional al costo total: <code>FO<sub>i</sub> = (1/C<sub>i</sub>) / Σ(1/C<sub>j</sub>)</code></p>
+          </div>
+          <div class="table-wrapper">
+            <table class="data-table" id="bg-fo-table">
+              <thead><tr><th>Concepto de Costo (M$)</th><th>🏭 Barranc.</th><th>🏙️ Bucaram.</th><th>🏛️ Bogotá</th></tr></thead>
+              <tbody>
+                <tr><td>Terreno (M$)</td><td><input class="cell-input cost-input" type="number" value="120"/></td><td><input class="cell-input cost-input" type="number" value="200"/></td><td><input class="cell-input cost-input" type="number" value="450"/></td></tr>
+                <tr><td>Construcción (M$)</td><td><input class="cell-input cost-input" type="number" value="180"/></td><td><input class="cell-input cost-input" type="number" value="195"/></td><td><input class="cell-input cost-input" type="number" value="220"/></td></tr>
+                <tr><td>Mano de obra/año (M$)</td><td><input class="cell-input cost-input" type="number" value="80"/></td><td><input class="cell-input cost-input" type="number" value="95"/></td><td><input class="cell-input cost-input" type="number" value="130"/></td></tr>
+                <tr><td>Materias primas/año (M$)</td><td><input class="cell-input cost-input" type="number" value="60"/></td><td><input class="cell-input cost-input" type="number" value="65"/></td><td><input class="cell-input cost-input" type="number" value="70"/></td></tr>
+                <tr class="total-row"><td><strong>Costo Total (C<sub>i</sub>)</strong></td><td id="fo-total-0"><strong>—</strong></td><td id="fo-total-1"><strong>—</strong></td><td id="fo-total-2"><strong>—</strong></td></tr>
+                <tr class="fo-row" id="fo-result-row" style="display:none"><td><strong>FO<sub>i</sub></strong></td><td id="fo-val-0" class="result-cell"></td><td id="fo-val-1" class="result-cell"></td><td id="fo-val-2" class="result-cell"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="btn-row">
+            <button class="btn-ghost" onclick="bgGoToStage(1)">← Atrás</button>
+            <button class="btn-primary" onclick="calcularFO()">⚡ Calcular FO</button>
+          </div>
+          <pre class="steps-log" id="bg-fo-steps"></pre>
+          <div class="btn-row" style="margin-top:12px" id="bg-btn-to-3" style="display:none"><button class="btn-secondary" onclick="bgGoToStage(3)">Siguiente: FS →</button></div>
+        </div>
+
+        <!-- Etapa 3 -->
+        <div class="bg-stage" id="bg-stage-3">
+          <div class="stage-header">
+            <h3><span class="stage-tag subjective">SUBJETIVO</span>Etapa 3: Factor Subjetivo (FS)</h3>
+            <p>Califica factores cualitativos del 1 al 10. Asigna un peso (W) a cada factor. <code>FS<sub>i</sub> = Σ(W<sub>k</sub> × (C<sub>ki</sub>/10))</code></p>
+          </div>
+          <div class="weight-progress-bar">
+            <div class="weight-progress-label">Suma de pesos: <strong id="fs-weight-sum">1.00</strong></div>
+            <div class="weight-bar-track"><div class="weight-bar-fill" id="fs-weight-bar" style="width:100%"></div></div>
+          </div>
+          <div class="table-wrapper">
+            <table class="data-table" id="bg-fs-table">
+              <thead><tr><th>Factor Cualitativo</th><th>Peso (W)</th><th>🏭 Barranc.</th><th>🏙️ Bucaram.</th><th>🏛️ Bogotá</th></tr></thead>
+              <tbody>
+                <tr><td>Calidad de vida</td><td><input class="cell-input weight-input fs-weight" type="number" step="0.05" min="0" max="1" value="0.40" onchange="validateFSWeights()"/></td><td><input class="cell-input score-input" type="number" min="1" max="10" value="6"/></td><td><input class="cell-input score-input" type="number" min="1" max="10" value="8"/></td><td><input class="cell-input score-input" type="number" min="1" max="10" value="9"/></td></tr>
+                <tr><td>Ambiente empresarial</td><td><input class="cell-input weight-input fs-weight" type="number" step="0.05" min="0" max="1" value="0.35" onchange="validateFSWeights()"/></td><td><input class="cell-input score-input" type="number" min="1" max="10" value="7"/></td><td><input class="cell-input score-input" type="number" min="1" max="10" value="8"/></td><td><input class="cell-input score-input" type="number" min="1" max="10" value="9"/></td></tr>
+                <tr><td>Apoyo gubernamental</td><td><input class="cell-input weight-input fs-weight" type="number" step="0.05" min="0" max="1" value="0.25" onchange="validateFSWeights()"/></td><td><input class="cell-input score-input" type="number" min="1" max="10" value="8"/></td><td><input class="cell-input score-input" type="number" min="1" max="10" value="7"/></td><td><input class="cell-input score-input" type="number" min="1" max="10" value="6"/></td></tr>
+                <tr class="fs-result-row" id="fs-result-row" style="display:none"><td><strong>FS<sub>i</sub></strong></td><td>—</td><td id="fs-val-0" class="result-cell"></td><td id="fs-val-1" class="result-cell"></td><td id="fs-val-2" class="result-cell"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="btn-row">
+            <button class="btn-ghost" onclick="bgGoToStage(2)">← Atrás</button>
+            <button class="btn-primary" onclick="calcularFS()">⚡ Calcular FS</button>
+          </div>
+          <pre class="steps-log" id="bg-fs-steps"></pre>
+          <div class="btn-row" style="margin-top:12px" id="bg-btn-to-4" style="display:none"><button class="btn-secondary" onclick="bgGoToStage(4)">Siguiente: MPL →</button></div>
+        </div>
+
+        <!-- Etapa 4: MPL -->
+        <div class="bg-stage" id="bg-stage-4">
+          <div class="stage-header">
+            <h3><span class="stage-tag mpl">RESULTADO</span>Etapa 4: Índice MPL</h3>
+            <p>Ajusta el valor de K para balancear el peso de los factores objetivos vs. subjetivos. El mapa se actualiza en tiempo real.</p>
+          </div>
+          <div class="k-slider-panel">
+            <div class="k-slider-labels">
+              <span>Más subjetivo (FS domina)<br/><small>K → 0</small></span>
+              <span class="k-center"><code class="k-label" id="k-value-display">0.60</code><br/><small>K actual</small></span>
+              <span style="text-align:right">Más objetivo (FO domina)<br/><small>K → 1</small></span>
+            </div>
+            <input type="range" min="0" max="1" step="0.01" value="0.60" class="k-slider" id="k-slider" oninput="onKChange()"/>
+            <div class="k-extremes"><span>K=0: solo FS</span><span>K=0.5: equilibrado</span><span>K=1: solo FO</span></div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-ghost" onclick="bgGoToStage(3)">← Atrás</button>
+            <button class="btn-primary" onclick="calcularMPL()">🏆 Calcular MPL Final</button>
+          </div>
+          <div id="bg-mpl-table-wrapper" style="display:none;margin-top:14px">
+            <div class="table-wrapper">
+              <table class="data-table">
+                <thead><tr><th>Ciudad</th><th>FO<sub>i</sub></th><th>FS<sub>i</sub></th><th>MPL<sub>i</sub></th><th>Ranking</th></tr></thead>
+                <tbody id="bg-mpl-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="bar-chart" id="bg-bar-chart" style="display:none">
+            <div class="bar-row"><div class="bar-city">🏭 Barranc.</div><div class="bar-track"><div class="bar-fill" id="bar-fill-0" style="width:0%"></div></div><div class="bar-val" id="bar-val-0">—</div></div>
+            <div class="bar-row"><div class="bar-city">🏙️ Bucaram.</div><div class="bar-track"><div class="bar-fill" id="bar-fill-1" style="width:0%"></div></div><div class="bar-val" id="bar-val-1">—</div></div>
+            <div class="bar-row"><div class="bar-city">🏛️ Bogotá</div><div class="bar-track"><div class="bar-fill" id="bar-fill-2" style="width:0%"></div></div><div class="bar-val" id="bar-val-2">—</div></div>
+          </div>
+          <div class="winner-banner" id="bg-winner-banner" style="display:none"></div>
+          <pre class="steps-log" id="bg-mpl-steps"></pre>
+        </div>
+
+      </div>
+      <!-- Mapa B&G -->
+      <div class="col-map animate-fade-up" style="animation-delay:.1s">
+        <div class="map-card">
+          <div class="map-card-header"><span>🗺️ Mapa B&amp;G</span><span class="map-hint" id="bg-map-hint">Los toggles controlan el mapa</span></div>
+          <div id="bg-map" class="map-container"></div>
+          <div class="map-overlay">
+            <div class="overlay-title" id="bg-overlay-title">Etapa 1: Factores Críticos</div>
+            <div class="overlay-items" id="bg-overlay-items">
+              <div class="overlay-item neutral"><span class="rank-dot" style="background:#00d4ff"></span>🏭 Barrancabermeja</div>
+              <div class="overlay-item neutral"><span class="rank-dot" style="background:#00d4ff"></span>🏙️ Bucaramanga</div>
+              <div class="overlay-item neutral"><span class="rank-dot" style="background:#00d4ff"></span>🏛️ Bogotá</div>
+            </div>
+          </div>
+        </div>
+        <div class="reference-note">📖 <em>Brown, P. & Gibson, D.F. (1972). "A Quantified Model for Facility Site Selection." Ref.: Baca Urbina (2013) Cap. 4.</em></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA EJERCICIO 1 ════════════════════════════════════════ -->
+<div class="ejercicio-cta-section">
+  <h2>🎓 ¡Es tu turno de practicar!</h2>
+  <p>Aplica los dos métodos a uno de los proyectos reales de la clase y envía tus resultados directamente al profesor.</p>
+  <button class="btn-ejercicio" onclick="toggleEjercicio()">
+    <span class="btn-icon">✏️</span>
+    Ejercicio 1 — Localización de mi Proyecto
+  </button>
+</div>
+
+<!-- ══ SECCIÓN EJERCICIO 1 ════════════════════════════════════ -->
+<div id="ejercicio-section" style="display:none">
+  <div class="ejercicio-inner" style="max-width:1280px;margin:0 auto;padding:80px 24px">
+
+    <!-- Header -->
+    <div class="ejercicio-header">
+      <div class="section-badge" style="background:linear-gradient(135deg,#7c3aed,#10b981)">EJERCICIO 1</div>
+      <h2>Aplica los Métodos a tu Proyecto</h2>
+      <p>Analiza la localización de tu proyecto usando tanto Puntos Ponderados como Brown &amp; Gibson. Al terminar, envía tus resultados al profesor.</p>
+    </div>
+
+    <!-- Nombre del estudiante -->
+    <div class="student-input-block">
+      <label for="ej-student-name">👤 Nombre completo del estudiante</label>
+      <input type="text" id="ej-student-name" class="student-name-input" placeholder="Escribe tu nombre aquí…"/>
+      <div class="name-error" id="ej-name-error">⚠️ Por favor ingresa tu nombre antes de seleccionar un proyecto.</div>
+    </div>
+
+    <!-- Selección de proyectos -->
+    <div class="proj-cards-grid">
+      <!-- Proyecto 1 -->
+      <div class="proj-card" id="proj-card-suplementos">
+        <span class="proj-emoji">💊</span>
+        <div class="proj-title">Tienda de Suplementos Deportivos</div>
+        <div class="proj-subtitle">📍 Zona: Puerto Wilches, Santander</div>
+        <p class="proj-desc">Evalúa la mejor localización para una tienda de suplementos que abastezca el mercado del Magdalena Medio. Ciudades a comparar: <strong>Puerto Wilches, Barrancabermeja y Sabana de Torres.</strong></p>
+        <button class="proj-select-btn" onclick="elegirProyecto('suplementos')">Seleccionar este proyecto →</button>
+      </div>
+      <!-- Proyecto 2 -->
+      <div class="proj-card" id="proj-card-logistica">
+        <span class="proj-emoji">📦</span>
+        <div class="proj-title">Empresa de Logística E-commerce</div>
+        <div class="proj-subtitle">📍 Zona: Magdalena Medio (Shein, AliExpress…)</div>
+        <p class="proj-desc">Evalúa dónde instalar el centro de distribución para entregas de compras online. Ciudades: <strong>Puente Sogamoso, Puerto Wilches y Barrancabermeja.</strong></p>
+        <button class="proj-select-btn" onclick="elegirProyecto('logistica')">Seleccionar este proyecto →</button>
+      </div>
+    </div>
+
+    <!-- Contenido dinámico del proyecto -->
+    <div id="ej-project-content">
+      <!-- Banner del proyecto seleccionado -->
+      <div class="ej-project-banner">
+        <div class="ej-project-title-text" id="ej-project-title"></div>
+        <p class="ej-project-desc-text" id="ej-project-desc"></p>
+      </div>
+
+      <!-- ── MÉTODO 1: PUNTOS PONDERADOS ── -->
+      <div class="ej-method-block">
+        <div class="ej-method-title">⚖️ Parte A: Método de Puntos Ponderados</div>
+        <p class="ej-method-desc">Asigna pesos (W) y calificaciones (1–10) a cada factor para cada ciudad. Verifica que la suma de pesos sea <strong>1.0</strong>.</p>
+
+        <div class="weight-progress-bar">
+          <div class="weight-progress-label">Suma de pesos W: <strong id="ej-pp-weight-sum">1.00</strong></div>
+          <div class="weight-bar-track"><div class="weight-bar-fill" id="ej-pp-weight-bar" style="width:100%"></div></div>
+        </div>
+
+        <div class="two-col-layout" style="gap:20px">
+          <div>
+            <div class="table-wrapper">
+              <table class="data-table">
+                <thead id="ej-pp-thead"></thead>
+                <tbody id="ej-pp-tbody"></tbody>
+              </table>
+            </div>
+            <div class="btn-row">
+              <button class="btn-primary" onclick="calcularEjPP()">⚡ Calcular Puntos Ponderados</button>
+            </div>
+            <div class="result-panel" id="ej-pp-result" style="display:none"></div>
+          </div>
+          <!-- Mapa PP del ejercicio -->
+          <div>
+            <div class="map-card">
+              <div class="map-card-header"><span>🗺️ Mapa Puntos Ponderados</span></div>
+              <div id="ej-pp-map" class="map-container"></div>
+              <div class="map-overlay">
+                <div class="overlay-title">Resultados PP</div>
+                <div class="overlay-items" id="ej-pp-overlay-items"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── MÉTODO 2: BROWN & GIBSON ── -->
+      <div class="ej-method-block">
+        <div class="ej-method-title">🔬 Parte B: Método Brown &amp; Gibson</div>
+        <p class="ej-method-desc">Sigue las 3 etapas: factores críticos, costos objetivos (FO) y factores subjetivos (FS). Al final combina con el slider K.</p>
+
+        <div class="two-col-layout" style="gap:20px">
+          <div>
+
+            <!-- Etapa 1: Críticos -->
+            <div style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:var(--radius-md);padding:20px;margin-bottom:16px">
+              <div style="font-weight:700;margin-bottom:10px;color:var(--accent-red)">① Factores Críticos</div>
+              <div class="table-wrapper">
+                <table class="data-table">
+                  <thead id="ej-bg-critical-thead">
+                    <tr><th>Factor Crítico</th></tr>
+                  </thead>
+                  <tbody id="ej-bg-critical-tbody"></tbody>
+                </table>
+              </div>
+              <div class="stage-result" id="ej-bg-critical-result" style="display:block;margin-top:10px;opacity:.7">Activa/desactiva los toggles para eliminar ciudades.</div>
+            </div>
+
+            <!-- Etapa 2: FO -->
+            <div style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:var(--radius-md);padding:20px;margin-bottom:16px">
+              <div style="font-weight:700;margin-bottom:10px;color:var(--accent-amber)">② Factor Objetivo (FO) — Costos</div>
+              <p style="font-size:.82rem;color:var(--text-secondary);margin-bottom:12px">Modifica los costos orientativos según tu investigación. Los valores están en millones de pesos (M$).</p>
+              <div class="table-wrapper">
+                <table class="data-table">
+                  <thead id="ej-bg-fo-thead"><tr><th>Concepto</th></tr></thead>
+                  <tbody id="ej-bg-fo-tbody"></tbody>
+                </table>
+              </div>
+              <div class="btn-row" style="margin-top:10px">
+                <button class="btn-primary" onclick="calcularEjFO()">⚡ Calcular FO</button>
+              </div>
+            </div>
+
+            <!-- Etapa 3: FS -->
+            <div style="background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.2);border-radius:var(--radius-md);padding:20px;margin-bottom:16px">
+              <div style="font-weight:700;margin-bottom:4px;color:#a78bfa">③ Factor Subjetivo (FS)</div>
+              <div class="weight-progress-label" style="margin-bottom:8px">Suma pesos FS: <strong id="ej-fs-weight-sum">1.00</strong></div>
+              <div class="weight-bar-track" style="margin-bottom:12px"><div class="weight-bar-fill" id="ej-fs-weight-bar" style="width:100%"></div></div>
+              <div class="table-wrapper">
+                <table class="data-table">
+                  <thead id="ej-bg-fs-thead"><tr><th>Factor</th><th>Peso W</th></tr></thead>
+                  <tbody id="ej-bg-fs-tbody"></tbody>
+                </table>
+              </div>
+              <div class="btn-row" style="margin-top:10px">
+                <button class="btn-primary" onclick="calcularEjFS()">⚡ Calcular FS</button>
+              </div>
+            </div>
+
+            <!-- Etapa 4: MPL / K slider -->
+            <div id="ej-mpl-section" style="display:none;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:var(--radius-md);padding:20px">
+              <div style="font-weight:700;margin-bottom:10px;color:var(--accent-green)">④ Índice MPL — Resultado Final</div>
+              <div class="k-slider-panel" style="margin-bottom:12px">
+                <div class="k-slider-labels">
+                  <span style="font-size:.78rem">FS domina<br/>(K→0)</span>
+                  <span class="k-center"><code class="k-label" id="ej-k-value-display">0.60</code></span>
+                  <span style="text-align:right;font-size:.78rem">FO domina<br/>(K→1)</span>
+                </div>
+                <input type="range" min="0" max="1" step="0.01" value="0.60" class="k-slider" id="ej-k-slider" oninput="onEjKChange()"/>
+              </div>
+              <div class="btn-row">
+                <button class="btn-primary" onclick="calcularEjMPL()">🏆 Calcular MPL Final</button>
+              </div>
+              <div class="result-panel" id="ej-mpl-result" style="display:none;margin-top:12px"></div>
+            </div>
+
+          </div>
+          <!-- Mapa B&G del ejercicio -->
+          <div>
+            <div class="map-card" style="position:sticky;top:90px">
+              <div class="map-card-header"><span>🗺️ Mapa Brown &amp; Gibson</span></div>
+              <div id="ej-bg-map" class="map-container"></div>
+              <div class="map-overlay">
+                <div class="overlay-title">Estado del análisis</div>
+                <div class="overlay-items" id="ej-bg-overlay-items"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ENVÍO ── -->
+      <div class="submit-section" id="ej-submit-section" style="display:none">
+        <h3>🎉 ¡Ejercicio completado!</h3>
+        <p>Has calculado la localización con ambos métodos. Haz clic para enviar tus resultados al registro del curso.</p>
+        <button class="btn-submit" id="ej-submit-btn" onclick="submitEjercicio()">
+          📤 Enviar Respuestas al Profesor
+        </button>
+        <div id="ej-submit-result"></div>
+      </div>
+
+    </div><!-- /ej-project-content -->
+  </div>
+</div>
+
+<!-- ══ FOOTER ═════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span style="font-size:1.8rem">📍</span>
+      <div>
+        <div>Localización de Proyectos</div>
+        <p>UNIPAZ · Formulación y Evaluación de Proyectos</p>
+      </div>
+    </div>
+    <div class="footer-info">
+      <div>📖 <em>Baca Urbina, G. (2013). Evaluación de Proyectos (7ª ed.). McGraw-Hill.</em></div>
+      <div style="margin-top:4px">Herramienta educativa — Uso académico</div>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts — Orden importa: maps → módulos → app -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/maps.js"></script>
+<script src="js/puntos.js"></script>
+<script src="js/browngibson.js"></script>
+<script src="js/ejercicio.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
