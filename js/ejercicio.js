@@ -95,49 +95,65 @@ function toggleEjercicio() {
 
 // ── Selección de proyecto ────────────────────────────────────
 function elegirProyecto(projectId) {
-  const name = document.getElementById('ej-student-name').value.trim();
+  const nameInput = document.getElementById('ej-student-name');
+  const name = nameInput ? nameInput.value.trim() : '';
   if (!name) {
-    document.getElementById('ej-name-error').style.display = 'block';
-    document.getElementById('ej-student-name').focus();
+    const errEl = document.getElementById('ej-name-error');
+    if (errEl) errEl.style.display = 'block';
+    if (nameInput) nameInput.focus();
     return;
   }
-  document.getElementById('ej-name-error').style.display = 'none';
+  const errEl = document.getElementById('ej-name-error');
+  if (errEl) errEl.style.display = 'none';
 
   EJ.studentName = name;
   EJ.project = projectId;
   const proj = PROYECTOS[projectId];
+  if (!proj) { alert('Proyecto no encontrado: ' + projectId); return; }
 
   // Marcar card seleccionada
   document.querySelectorAll('.proj-card').forEach(c => c.classList.remove('selected'));
-  document.getElementById(`proj-card-${projectId}`).classList.add('selected');
+  const card = document.getElementById('proj-card-' + projectId);
+  if (card) card.classList.add('selected');
 
   // Mostrar contenido
   const content = document.getElementById('ej-project-content');
+  if (!content) { alert('Error: bloque de contenido no encontrado'); return; }
   content.style.display = 'block';
-  setTimeout(() => content.scrollIntoView({ behavior:'smooth', block:'start' }), 200);
 
   // Título del proyecto
-  document.getElementById('ej-project-title').innerHTML =
-    `${proj.emoji} ${proj.nombre}<br><span style="font-size:.9rem;font-weight:400;color:var(--text-secondary)">${proj.ubicacion}</span>`;
-  document.getElementById('ej-project-desc').textContent = proj.descripcion;
+  const titleEl = document.getElementById('ej-project-title');
+  const descEl  = document.getElementById('ej-project-desc');
+  if (titleEl) titleEl.innerHTML = proj.emoji + ' ' + proj.nombre + '<br><span style="font-size:.9rem;font-weight:400;color:var(--text-secondary)">' + proj.ubicacion + '</span>';
+  if (descEl)  descEl.textContent = proj.descripcion;
 
-  // Renderizar tablas con datos del proyecto
-  renderEjPPTable(proj);
-  renderEjBGCriticalTable(proj);
-  renderEjBGFOTable(proj);
-  renderEjBGFSTable(proj);
+  // Renderizar tablas
+  try { renderEjPPTable(proj); }       catch(e){ console.error('renderEjPPTable:', e); }
+  try { renderEjBGCriticalTable(proj); } catch(e){ console.error('renderEjBGCritical:', e); }
+  try { renderEjBGFOTable(proj); }     catch(e){ console.error('renderEjBGFOTable:', e); }
+  try { renderEjBGFSTable(proj); }     catch(e){ console.error('renderEjBGFSTable:', e); }
 
-  // Inicializar mapas del ejercicio
-  initEjMaps(proj);
+  // Inicializar mapas
+  try { initEjMaps(proj); } catch(e){ console.error('initEjMaps:', e); }
 
   // Resetear resultados previos
   EJ.ppScores = null; EJ.bgMPL = null; EJ.bgFO = null; EJ.bgFS = null;
   EJ.bgCriticalPass = [true, true, true]; EJ.bgK = 0.60;
-  document.getElementById('ej-submit-section').style.display = 'none';
-  document.getElementById('ej-submit-result').style.display = 'none';
-  document.getElementById('ej-k-value-display').textContent = '0.60';
-  document.getElementById('ej-k-slider').value = 0.60;
-  document.getElementById('ej-mpl-section').style.display = 'none';
+
+  const submitSec = document.getElementById('ej-submit-section');
+  const submitRes = document.getElementById('ej-submit-result');
+  const kDisp     = document.getElementById('ej-k-value-display');
+  const kSlider   = document.getElementById('ej-k-slider');
+  const mplSec    = document.getElementById('ej-mpl-section');
+
+  if (submitSec) submitSec.style.display = 'none';
+  if (submitRes) submitRes.style.display = 'none';
+  if (kDisp)    kDisp.textContent = '0.60';
+  if (kSlider)  kSlider.value = 0.60;
+  if (mplSec)   mplSec.style.display = 'none';
+
+  // Scroll al contenido
+  setTimeout(() => content.scrollIntoView({ behavior:'smooth', block:'start' }), 300);
 }
 
 // ── Render tablas del ejercicio ──────────────────────────────
